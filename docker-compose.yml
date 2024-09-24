@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  users-service:
+    build:
+      context: ./users-service
+      dockerfile: Dockerfile
+    environment:
+      - DB_CONNECTION=sqlite
+      - REDIS_HOST=redis
+    volumes:
+      - ./users-service:/var/www/html
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+
+  notifications-service:
+    build:
+      context: ./notifications-service
+      dockerfile: Dockerfile
+    environment:
+      - REDIS_HOST=redis
+    volumes:
+      - ./notifications-service:/var/www/html
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
